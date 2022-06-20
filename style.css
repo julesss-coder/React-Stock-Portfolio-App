@@ -1,0 +1,17 @@
+.table input,
+.add-stock input {
+  width: 70px;
+}
+
+.add-stock input {
+  border: 1px solid #ced4da;
+}
+
+.table-responsive {
+  overflow: auto;
+  display: block;
+}
+
+.portfolio-summary {
+  font-size: 1.5em;
+}
