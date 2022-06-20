@@ -179,7 +179,7 @@ class StockPortfolio extends React.Component {
 
     return(
       <div className="container stock-portfolio mt-5">
-        <h1 className="text-center">Stock Portfolio</h1>
+        <h1 className="text-center mb-3">Stock Portfolio</h1>
         <div className="display-portfolio">
           <div className="row">
             <div className="col-12">
@@ -205,7 +205,7 @@ class StockPortfolio extends React.Component {
           
         <div className="row">
           <div className="col-10">
-            <div className="add-stock input-group">
+            <div className="add-stock input-group mt-3">
               <input 
                 type="text" 
                 aria-label="Name" 
@@ -256,8 +256,8 @@ class StockPortfolio extends React.Component {
         <div className="row mt-3">
           <div className="col">
             <div className="portfolio-summary">
-              <p className="d-inline-block me-5 ">Portfolio market value: ${portfolio_market_value}</p>
-              <p className="d-inline-block">Portfolio gain/loss: ${portfolio_gains_losses}</p>
+              <p className="me-5 ">Portfolio market value: ${portfolio_market_value}</p>
+              <p>Portfolio gain/loss: ${portfolio_gains_losses}</p>
             </div>
           </div>
         </div>
