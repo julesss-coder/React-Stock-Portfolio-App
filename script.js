@@ -178,11 +178,11 @@ class StockPortfolio extends React.Component {
     let portfolio_gains_losses = portfolio_market_value - portfolio_cost;
 
     return(
-      <div className="container stock-portfolio mt-5">
-        <h1 className="text-center mb-3">Stock Portfolio</h1>
+      <div className="container stock-portfolio mt-5 d-flex justify-content-center">
         <div className="display-portfolio">
           <div className="row">
-            <div className="col-12">
+            <div className="col-auto">
+            <h1 className="text-center mb-3">Stock Portfolio</h1>
               <table className="table table-responsive">
                 <thead>
                   <tr>
@@ -201,63 +201,63 @@ class StockPortfolio extends React.Component {
               </table>
             </div>
           </div>
-        </div>
-          
-        <div className="row">
-          <div className="col-10">
-            <div className="add-stock input-group mt-3">
-              <input 
-                type="text" 
-                aria-label="Name" 
-                name="name"
-                placeholder="Name" 
-                // className="form-control" 
-                value={form.name}
-                onChange={(event) => this.handleInputChange(event)}
-              />
-              <input 
-                type="number" 
-                aria-label="Shares" 
-                name="shares_owned"
-                placeholder="Shares" 
-                // className="form-control" 
-                value={form.shares_owned}
-                onChange={(event) => this.handleInputChange(event)}
-              />            
-              <input 
-                type="number" 
-                aria-label="Cost" 
-                name="cost_per_share"
-                placeholder="Cost" 
-                // className="form-control" 
-                value={form.cost_per_share}
-                onChange={(event) => this.handleInputChange(event)}
-              />
-              <input 
-                type="number" 
-                aria-label="Market price" 
-                name="market_price"
-                placeholder="Market price" 
-                // className="form-control" 
-                value={form.market_price}
-                onChange={(event) => this.handleInputChange(event)}
-              />
-              <button 
-                onClick={this.addStock} 
-                className="btn btn-outline-secondary" 
-                type="button" 
-                id="button-addon2">
-                  Add
-              </button>
+
+          <div className="row">
+            <div className="col">
+              <div className="add-stock input-group mt-3">
+                <input 
+                  type="text" 
+                  aria-label="Name" 
+                  name="name"
+                  placeholder="Name" 
+                  // className="form-control" 
+                  value={form.name}
+                  onChange={(event) => this.handleInputChange(event)}
+                />
+                <input 
+                  type="number" 
+                  aria-label="Shares" 
+                  name="shares_owned"
+                  placeholder="Shares" 
+                  // className="form-control" 
+                  value={form.shares_owned}
+                  onChange={(event) => this.handleInputChange(event)}
+                />            
+                <input 
+                  type="number" 
+                  aria-label="Cost" 
+                  name="cost_per_share"
+                  placeholder="Cost" 
+                  // className="form-control" 
+                  value={form.cost_per_share}
+                  onChange={(event) => this.handleInputChange(event)}
+                />
+                <input 
+                  type="number" 
+                  aria-label="Market price" 
+                  name="market_price"
+                  placeholder="Market price" 
+                  // className="form-control" 
+                  value={form.market_price}
+                  onChange={(event) => this.handleInputChange(event)}
+                />
+                <button 
+                  onClick={this.addStock} 
+                  className="btn btn-primary" 
+                  type="button" 
+                  id="button-addon2">
+                    Add
+                </button>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="row mt-3">
-          <div className="col">
-            <div className="portfolio-summary">
-              <p className="me-5 ">Portfolio market value: ${portfolio_market_value}</p>
-              <p>Portfolio gain/loss: ${portfolio_gains_losses}</p>
+          <div className="row mt-3">
+            <div className="col">
+              <div className="portfolio-summary">
+                <p className="me-5">Portfolio market value: ${portfolio_market_value}</p>
+                <p>Portfolio gain/loss: ${portfolio_gains_losses}</p>
+              </div>
             </div>
           </div>
         </div>
