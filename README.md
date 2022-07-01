@@ -1,10 +1,7 @@
 # React Stock Portfolio App
 
 
-A stock portfolio app in React. The same as this (URL: https://github.com/julesss-coder/React-Stock-Portfolio-App) but with extracted components.
-
-
-It has the following functionality:
+A stock portfolio app in React with the  following functionality:
 
 - Calculate market value based on market price and shares owned
 - Calculate unrealized gain/loss based on market value, cost per share, and shares owned
