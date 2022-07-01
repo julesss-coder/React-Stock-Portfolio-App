@@ -1,18 +1,144 @@
-// *What is state in this app?*
-// initial portfolio: is changed by user
-// user input:
-  // a: add new stock
-  // b: changes to existing stock (shares owned cost, price)
-  // c: removal of stock
-// STATE => portfolio data (initial and user input) are a state
-// portfolio value, gain and loss: no state, as it doesn't change the data
+function StockInputForm(props) {
+  const {handleChange, name, value} = props;
 
-// *What I want to happen:*
-// User clicks remove button -> this stock is removed from state and DOM -- OK 
-// User changes data of individual stock -> state, market value, gainLoss, data summary update -- OK 
-// User adds new stock -> stock is added to state -- OK
+  return (
+    <input onChange={handleChange} type="number" name={name} value={value} />
+  )
+}
+
+function Stock(props) {
+  let {stock, handleChange, removeStock} = props;
+  let {name, shares_owned, cost_per_share, market_price} = stock;
+
+  let market_value = shares_owned * market_price;
+  let gain_loss = market_value - (shares_owned * cost_per_share);
+
+  return (
+    <tr>
+      <td>{name}</td>
+      <td>
+        <StockInputForm handleChange={handleChange} name={"shares_owned"} value={shares_owned}/>
+      </td>
+      <td>
+        <StockInputForm handleChange={handleChange} name={"cost_per_share"} value={cost_per_share}/>
+      </td>
+      <td>
+        <StockInputForm handleChange={handleChange} name={"market_price"} value={market_price}/>
+      </td>
+      <td>{market_value}</td>
+      <td>{gain_loss}</td>
+      <td>
+        <button onClick={removeStock} className="btn btn-light btn-sm">Remove</button>
+      </td>
+    </tr>
+  )
+}
 
 
+class AddStockInput extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      name: '',
+      shares_owned: 0,
+      cost_per_share: 0,
+      market_price: 0
+    }
+
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+
+  handleInputChange(event) {
+    // Set input of add stock input fields
+    let {name, value} = event.target;
+    this.setState({
+      [name]: value,
+    });
+  }
+  
+
+  handleSubmit() {    
+    let {name, shares_owned, cost_per_share, market_price} = this.state;
+
+    // props.onSubmit was passed into AddStockInput from StockPortfolio
+    // i.e. we are calling addStock and passing in the new stock
+    this.props.onSubmit({
+      name, 
+      shares_owned,
+      cost_per_share,
+      market_price
+    });
+
+    // Reset input form to initial state
+    this.setState({
+      name: '',
+      shares_owned: 0,
+      cost_per_share: 0, 
+      market_price: 0,
+    });
+  }
+
+  render() {
+    let {name, shares_owned, cost_per_share, market_price} = this.state;
+
+    return(
+      <div className="row">
+          <div className="col">
+            <div className="add-stock input-group mt-3">
+              <input 
+                type="text" 
+                aria-label="Name" 
+                name="name"
+                placeholder="Name" 
+                // className="form-control" 
+                value={name}
+                onChange={this.handleInputChange}
+              />
+              <input 
+                type="number" 
+                aria-label="Shares" 
+                name="shares_owned"
+                placeholder="Shares" 
+                // className="form-control" 
+                value={shares_owned}
+                onChange={this.handleInputChange}
+              />            
+              <input 
+                type="number" 
+                aria-label="Cost" 
+                name="cost_per_share"
+                placeholder="Cost" 
+                // className="form-control" 
+                value={cost_per_share}
+                onChange={this.handleInputChange}
+              />
+              <input 
+                type="number" 
+                aria-label="Market price" 
+                name="market_price"
+                placeholder="Market price" 
+                // className="form-control" 
+                value={market_price}
+                onChange={this.handleInputChange}
+              />
+              <button 
+                onClick={this.handleSubmit} 
+                className="btn btn-primary" 
+                type="button" 
+                id="button-addon2">
+                  Add
+              </button>
+            </div>
+          </div>
+        </div>
+    )
+  }
+}
+
+// StockPortfolio only needs the new stock data from AddStockInput. That's why we can move the form state, as well as handleInputChange() into AddStockInput()
 class StockPortfolio extends React.Component {  
   constructor(props) {
     super(props);
@@ -37,28 +163,14 @@ class StockPortfolio extends React.Component {
           market_price: 3
         }
       ], 
-      form: {
-        name: '',
-        shares_owned: 0,
-        cost_per_share: 0,
-        market_price: 0
-      }
     }
 
     this.removeStock = this.removeStock.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.handleInputChange = this.handleInputChange.bind(this);
     this.addStock = this.addStock.bind(this);
   }
 
-  /* === REMOVE A STOCK === */
-  // What do we need the key for if we don't use it to get the stock we want to delete?
-    // Experiment: delete the key that is assigned in the map callback that is called inside render(), to assign a value to `stockRows`.
-    // Result: 
-      // Console shows warning: "Warning: Each child in a list should have a unique "key" prop."
-      // Everything works as before!!
 
-  // `name` was passed in as the value of event handler `onClick`, and it was accessible because at that point, we were inside a map callback with access to stock.name.
   removeStock(name) {
     let newPortfolio = this.state.portfolio.slice();
 
@@ -72,58 +184,25 @@ class StockPortfolio extends React.Component {
     });
   }
 
-  /* === HANDLE CHANGES TO INPUT IN MAIN STOCK DISPLAY === */
+
   handleChange(event, index) {
     let {name, value} = event.target;
     let editedPortfolio = this.state.portfolio.slice();
-    editedPortfolio[index][name] = value;
+    editedPortfolio[index][name] = Number(value);
 
     this.setState({
       portfolio: editedPortfolio
     });
   }
 
-  /* === HANDLE CHANGE TO INPUT FIELDS IN ADD-STOCK-AREA === */
-  handleInputChange(event) {
-    let {name, value} = event.target;
-    let {form} = this.state;
-    form[name] = value;
-    this.setState({form});
-  }
 
-  /* === ADD A STOCK === */
-  addStock() {
+  addStock(stock) {
+    let newPortfolio = this.state.portfolio.slice().concat(stock);
+    
     this.setState({
-      portfolio: this.state.portfolio.concat([this.state.form]),
-      form: {
-        name: '',
-        shares_owned: 0,
-        cost_per_share: 0,
-        market_price: 0
-      }
+      portfolio: newPortfolio
     });
   }
-
-  // VERSION 1 of addStock: This only works if the input fields are NOT controlled components.
-  // I added version 2 (above) where the state controls the value of the input fields.
-  // addStock(event) {
-  //   let newStockInputFields = event.target.parentElement.children;
-
-  //   let newStock = {
-  //     name: newStockInputFields[0].value, 
-  //     shares_owned: Number(newStockInputFields[1].value),
-  //     cost_per_share: Number(newStockInputFields[2].value),
-  //     market_price: Number(newStockInputFields[3].value)
-  //   };
-
-  //   this.setState({
-  //     portfolio: this.state.portfolio.concat([newStock])
-  //   });
-
-  //   for (let i = 0; i < newStockInputFields.length - 1; i++) {
-  //     newStockInputFields[i].value = '';
-  //   }
-  // }
 
   render() {
     // For each stock in portfolio, destructure this.state.portfolio and create the specified table row
@@ -135,36 +214,14 @@ class StockPortfolio extends React.Component {
         market_price
       } = stock;
 
-      let market_value = shares_owned * market_price;
-      let gain_loss = market_value - (shares_owned * cost_per_share);
-
-      // Why do I have access to `name` inside the onClick prop?
-      // Because we are in a map callback. Inside it, we have access to the properties of `stock`, which we destructered.
-
-      // Q: Is `onClick` a prop, or an event handler, an attribute, or what?
-      // A: `onClick' is an event handler that is passed as props to handleClick. See URL: https://reactjs.org/docs/faq-functions.html#how-do-i-pass-an-event-handler-like-onclick-to-a-component
+      // QUESTION: Why do I get an error, saying that:
+      // react_devtools_backend.js:4026 Warning: Stock: `key` is not a prop. Trying to access it will result in `undefined` being returned. If you need to access the same value within the child component, you should pass it as a different prop. (https://reactjs.org/link/special-props)
       return (
-        <tr key={name}>
-          <td>{name}</td>
-          <td>
-            <input onChange={(event) => this.handleChange(event, index)} type="number" name="shares_owned" value={shares_owned} />
-          </td>
-          <td>
-          <input onChange={(event) => this.handleChange(event, index)} type="number" name="cost_per_share" value={cost_per_share} />
-          </td>
-          <td>
-            <input onChange={(event) => this.handleChange(event, index)} type="number" name="market_price" value={market_price} />
-          </td>
-          <td>{market_value}</td>
-          <td>{gain_loss}</td>
-          <td>
-            <button onClick={() => this.removeStock(name)} className="btn btn-light btn-sm">Remove</button>
-          </td>
-        </tr>
+        <Stock key={name} stock={stock} index={index} handleChange={(event) => this.handleChange(event, index)} removeStock={() => this.removeStock(name)} />
       );
     });
 
-    const {portfolio, form} = this.state;
+    const {portfolio} = this.state;
 
     // Calculate portfolio value 
     let portfolio_market_value = portfolio.reduce((portfolio_sum, stock) => {
@@ -202,55 +259,8 @@ class StockPortfolio extends React.Component {
             </div>
           </div>
 
-          <div className="row">
-            <div className="col">
-              <div className="add-stock input-group mt-3">
-                <input 
-                  type="text" 
-                  aria-label="Name" 
-                  name="name"
-                  placeholder="Name" 
-                  // className="form-control" 
-                  value={form.name}
-                  onChange={(event) => this.handleInputChange(event)}
-                />
-                <input 
-                  type="number" 
-                  aria-label="Shares" 
-                  name="shares_owned"
-                  placeholder="Shares" 
-                  // className="form-control" 
-                  value={form.shares_owned}
-                  onChange={(event) => this.handleInputChange(event)}
-                />            
-                <input 
-                  type="number" 
-                  aria-label="Cost" 
-                  name="cost_per_share"
-                  placeholder="Cost" 
-                  // className="form-control" 
-                  value={form.cost_per_share}
-                  onChange={(event) => this.handleInputChange(event)}
-                />
-                <input 
-                  type="number" 
-                  aria-label="Market price" 
-                  name="market_price"
-                  placeholder="Market price" 
-                  // className="form-control" 
-                  value={form.market_price}
-                  onChange={(event) => this.handleInputChange(event)}
-                />
-                <button 
-                  onClick={this.addStock} 
-                  className="btn btn-primary" 
-                  type="button" 
-                  id="button-addon2">
-                    Add
-                </button>
-              </div>
-            </div>
-          </div>
+
+          <AddStockInput onSubmit={this.addStock} />
 
           <div className="row mt-3">
             <div className="col">
